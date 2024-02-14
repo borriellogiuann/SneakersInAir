@@ -12,17 +12,20 @@ struct ContentView: View {
         TabView {
             ListView()
                 .tabItem {
-                    Image(systemName: "shoe")
+                    Image(systemName: "calendar.badge.exclamationmark")
                     Text("Drops")
                 }
             ScannerView()
                 .tabItem {
-                    Image(systemName: "plus.viewfinder")
+                    ZStack{
+                        Image(systemName: "plus.viewfinder")
+                        Image(systemName: "shoe")
+                    }
                     Text("Scanner")
                 }
             FavoritesView()
                 .tabItem {
-                    Image(systemName: "star.fill")
+                    Image(systemName: "heart.fill")
                     Text("Favorites")
                 }
         }
