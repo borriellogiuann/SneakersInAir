@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct ListView: View {
+struct DropView: View {
     var body: some View {
         Text("Drops")
     }
 }
 
 #Preview {
-    ListView()
+    DropView()
 }
