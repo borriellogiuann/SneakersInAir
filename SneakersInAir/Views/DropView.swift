@@ -1,5 +1,5 @@
 //
-//  ListView.swift
+//  DropView.swift
 //  SneakersInAir
 //
 //  Created by Giovanni Borriello on 13/02/24.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct ListView: View {
+struct DropView: View {
     var body: some View {
         Text("Drops")
     }
 }
 
 #Preview {
-    ListView()
+    DropView()
 }
