@@ -18,7 +18,7 @@ struct SneakersInAirApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                ContentView()
+                PhotoContentView()
                     .tabItem {
                         Image(systemName: "plus.viewfinder")
                         Text("Scan")
@@ -33,7 +33,7 @@ struct SneakersInAirApp: App {
                         Image(systemName: "magnifyingglass")
                         Text("Explore")
                     }
-                DropView()
+                DropsView()
                     .tabItem {
                         Image(systemName: "calendar.badge.exclamationmark")
                         Text("Drops")
