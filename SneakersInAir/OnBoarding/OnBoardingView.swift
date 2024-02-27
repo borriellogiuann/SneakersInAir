@@ -13,11 +13,11 @@ struct OnBoardingView: View {
                     PageView(page: page)
                     Spacer()
                     if page == pages.last {
-                        Button("Sign up!", action: goToZero)
+                        Button("Enter the app", action: goToZero)
                             .buttonStyle(.bordered)
                             .tint(.customorange)
                     } else {
-                        Button("next", action: incrementPage)
+                        Button("Next", action: incrementPage)
                             .buttonStyle(.borderedProminent)
                             .tint(.customorange)
                     }

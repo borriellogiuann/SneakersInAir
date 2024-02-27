@@ -17,8 +17,8 @@ struct Page: Identifiable, Equatable {
     static var samplePage = Page(name: "Title Example", description: "This is a sample description for the purpose of debugging", imageUrl: "work", tag: 0)
     
     static var samplePages: [Page] = [
-        Page(name: "Welcome to Snkrs scanner", description: "The best app to scan shoes and identify them.", imageUrl: "cowork", tag: 0),
-        Page(name: "Meet new people!", description: "The perfect place to meet new people so you can meet new people!", imageUrl: "work", tag: 1),
-        Page(name: "Edit your face", description: "Don't like your face? Well then edit your face with our edit-face tool!", imageUrl: "website", tag: 2),
+        Page(name: "Welcome to KIXS", description: "Ready?", imageUrl: "cowork", tag: 0),
+        Page(name: "Scan Sneakers!", description: "kixs scans your shoes and provides information about them e.g. (price, materials, history)", imageUrl: "work", tag: 1),
+        Page(name: "Know about your favorite drop!", description: "Don't like your shoes? Find new models and drops that are right for you", imageUrl: "website", tag: 2),
     ]
 }
