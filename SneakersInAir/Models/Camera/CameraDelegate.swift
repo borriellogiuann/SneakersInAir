@@ -43,7 +43,6 @@ class CameraDelegate: NSObject, AVCapturePhotoCaptureDelegate {
             }
             do {
                 try data.write(to: directory.appendingPathComponent("fotina.jpeg")!)
-                try data.write(to: directory.appendingPathComponent("fotina.jpeg")!)
                 return
             } catch {
                 print(error.localizedDescription)

@@ -88,4 +88,16 @@ class CameraViewModel: ObservableObject {
         return image
     }
     
+    func getImagePath() -> URL{
+        var URL: URL = URL(fileURLWithPath: "")
+        let nsDocumentDirectory = FileManager.SearchPathDirectory.documentDirectory
+        let nsUserDomainMask    = FileManager.SearchPathDomainMask.userDomainMask
+        let paths               = NSSearchPathForDirectoriesInDomains(nsDocumentDirectory, nsUserDomainMask, true)
+        if let dirPath          = paths.first
+        {
+            URL = Foundation.URL(fileURLWithPath: dirPath).appendingPathComponent("fotina.jpeg")
+        }
+        return URL
+    }
+    
 }

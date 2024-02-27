@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct PopupShoeView: View {
+    
+    @Binding var shoeName: String
+    @Binding var shoeVariant: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack{
+            Image(systemName: "shoe")
+            Text("\(shoeName)\n\(shoeVariant)")
+                .foregroundStyle(.customblack)
+        }
     }
 }
 
 #Preview {
-    PopupShoeView()
+    PopupShoeView(shoeName: .constant("Air Force 1"), shoeVariant: .constant("Blaze Red"))
 }

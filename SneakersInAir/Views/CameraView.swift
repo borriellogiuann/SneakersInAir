@@ -6,43 +6,60 @@
 //
 
 import SwiftUI
+import PopupView
 
 struct CameraView: View {
     
-    @ObservedObject var viewModel = CameraViewModel()
+    @ObservedObject var cameraViewModel = CameraViewModel()
+    var visionAPIViewModel = VisionAPIViewModel()
     
     @State var image = UIImage(named: "ff")
+    @State var isShowingPopup: Bool = false
+    @State var shoeName: String = "tt"
+    @State var shoeVariant: String = "ttt"
+    var response = ""
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
-                
+                CameraPreview(session: cameraViewModel.session)
+                /*
+                PopupShoeView(shoeName: "aaaaa", shoeVariant: "aaaaa")
+                    .popup(isPresented: $isShowingPopup) {
+                } customize: {
+                    $0
+                        .type(.floater())
+                        .position(.top)
+                        .animation(.spring())
+                        .closeOnTapOutside(true)
+                        .backgroundColor(.black.opacity(0.5))
+                }
+                 */
                 VStack(spacing: 0) {
                     Button(action: {
                         // Call method to on/off flash light
                     }, label: {
-                        Image(systemName: viewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
+                        Image(systemName: cameraViewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
                             .font(.system(size: 20, weight: .medium, design: .default))
                     })
-                    .accentColor(viewModel.isFlashOn ? .yellow : .white)
+                    .accentColor(cameraViewModel.isFlashOn ? .yellow : .white)
                     
-                    CameraPreview(session: viewModel.session)
-                    
-                    HStack {
-                        Group {
-                            Image(uiImage: image!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 60, height: 60)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        }
-                    }
                     Spacer()
+                    
+                    Image(uiImage: image!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 60, height: 60)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    
                     Button(action: {
-                        viewModel.captureImage()
+                        cameraViewModel.captureImage()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            image = viewModel.getImage()
+                            image = cameraViewModel.getImage()
+                            visionAPIViewModel.getShoeName(url: cameraViewModel.getImagePath())
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                isShowingPopup.toggle()
+                            }
                         }
                     }) {
                         Circle()
@@ -59,7 +76,7 @@ struct CameraView: View {
             }
         }
         .onAppear {
-            viewModel.checkForDevicePermission()
+            cameraViewModel.checkForDevicePermission()
         }
     }
 }

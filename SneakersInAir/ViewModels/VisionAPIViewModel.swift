@@ -8,11 +8,13 @@
 import Foundation
 
 class VisionAPIViewModel: ObservableObject{
+    
+    @Published var answer: String?
 
-    func getShoeName(){
-        let apiKey = "YOUR_OPENAI_API_KEY"
+    func getShoeName(url: URL){
+        let apiKey = "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"
 
-        let imagePath = "path_to_your_image.jpg"
+        let imagePath = url.path()
 
         guard let base64Image = encodeImage(imagePath: imagePath) else {
             fatalError("Failed to encode image")
@@ -33,12 +35,12 @@ class VisionAPIViewModel: ObservableObject{
                 [
                     "role": "user",
                     "content": [
-                        ["type": "text", "text": "What’s in this image?"],
+                        ["type": "text", "text": "Start from the shoe in the photo, get the name and the variant of the shoe and answer me with a response formatted this way: 'name;variant'. If there is any error, send this 'error;describe the error'"],
                         ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64Image)"]]
                     ]
                 ]
             ],
-            "max_tokens": 300
+            "max_tokens": 2000
         ]
 
         do {
@@ -57,9 +59,13 @@ class VisionAPIViewModel: ObservableObject{
                 print("Error: \(error)")
             } else if let data = data {
                 do {
-                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        print(json)
-                    }
+                    let decoder = JSONDecoder()
+                    print(data)
+                    let jsonData = try decoder.decode(Response.self, from: data)
+                    print(jsonData)
+                    self.answer = jsonData.choices[0].message.content
+                    print("----------")
+                    print(self.answer)
                 } catch {
                     print("Error parsing JSON: \(error)")
                 }

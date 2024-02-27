@@ -18,7 +18,7 @@ struct CameraPreview: UIViewRepresentable { // for attaching AVCaptureVideoPrevi
      let view = VideoPreviewView()
      view.backgroundColor = .black
      view.videoPreviewLayer.session = session
-     view.videoPreviewLayer.videoGravity = .resizeAspect
+      view.videoPreviewLayer.videoGravity = .resizeAspectFill
      view.videoPreviewLayer.connection?.videoOrientation = .portrait
      return view
   }

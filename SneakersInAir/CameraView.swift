@@ -35,8 +35,6 @@ struct PhotoContentView: View {
                 .foregroundStyle(.white)
             Button(action: {
                 viewModel.capturePhoto()
-                let success = viewModel.saveImage()
-                print(success)
             }) {
                 Image(systemName: "camera.circle")
                     .resizable()
