@@ -18,7 +18,7 @@ struct SneakersInAirApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                CameraView()
+                ContentView()
                     .tabItem {
                         Image(systemName: "plus.viewfinder")
                         Text("Scan")
