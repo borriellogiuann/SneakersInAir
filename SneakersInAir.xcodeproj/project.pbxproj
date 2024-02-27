@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A9984EC2B88A9C10015962F /* SneakerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9984EB2B88A9C10015962F /* SneakerItemView.swift */; };
+		7A9984F02B8DE2570015962F /* AboutUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9984EF2B8DE2570015962F /* AboutUsView.swift */; };
 		BC0400FF2B7B6C90004DA9A0 /* SneakersInAirApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0400FE2B7B6C90004DA9A0 /* SneakersInAirApp.swift */; };
 		BC0401012B7B6C90004DA9A0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0401002B7B6C90004DA9A0 /* ContentView.swift */; };
 		BC0401032B7B6C91004DA9A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC0401022B7B6C91004DA9A0 /* Assets.xcassets */; };
@@ -17,6 +19,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7A22A6A52B84DDFB00D84918 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7A9984EB2B88A9C10015962F /* SneakerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SneakerItemView.swift; sourceTree = "<group>"; };
+		7A9984EF2B8DE2570015962F /* AboutUsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsView.swift; sourceTree = "<group>"; };
 		BC0400FB2B7B6C90004DA9A0 /* SneakersInAir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SneakersInAir.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC0400FE2B7B6C90004DA9A0 /* SneakersInAirApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SneakersInAirApp.swift; sourceTree = "<group>"; };
 		BC0401002B7B6C90004DA9A0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -43,9 +48,18 @@
 			children = (
 				BC3B34962B7B80EA009587CA /* FavoritesView.swift */,
 				BC9473902B835BD700C92C85 /* ExploreView.swift */,
+				7A9984EB2B88A9C10015962F /* SneakerItemView.swift */,
 				BC3B34942B7B7752009587CA /* DropView.swift */,
+				7A9984EF2B8DE2570015962F /* AboutUsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		7A22A6A42B84DDE200D84918 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		BC0400F22B7B6C90004DA9A0 = {
@@ -53,6 +67,7 @@
 			children = (
 				BC0400FD2B7B6C90004DA9A0 /* SneakersInAir */,
 				BC0400FC2B7B6C90004DA9A0 /* Products */,
+				7A22A6A42B84DDE200D84918 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +82,7 @@
 		BC0400FD2B7B6C90004DA9A0 /* SneakersInAir */ = {
 			isa = PBXGroup;
 			children = (
+				7A22A6A52B84DDFB00D84918 /* Info.plist */,
 				BC0400FE2B7B6C90004DA9A0 /* SneakersInAirApp.swift */,
 				BC0401002B7B6C90004DA9A0 /* ContentView.swift */,
 				54D60B242B7CB786000B5E0D /* Views */,
@@ -155,8 +171,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC3B34972B7B80EA009587CA /* FavoritesView.swift in Sources */,
+				7A9984F02B8DE2570015962F /* AboutUsView.swift in Sources */,
 				BC3B34952B7B7752009587CA /* DropView.swift in Sources */,
 				BC9473912B835BD700C92C85 /* ExploreView.swift in Sources */,
+				7A9984EC2B88A9C10015962F /* SneakerItemView.swift in Sources */,
 				BC0401012B7B6C90004DA9A0 /* ContentView.swift in Sources */,
 				BC0400FF2B7B6C90004DA9A0 /* SneakersInAirApp.swift in Sources */,
 			);
@@ -292,9 +310,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SneakersInAir/Preview Content\"";
-				DEVELOPMENT_TEAM = 85TW94Y6A7;
+				DEVELOPMENT_TEAM = 7DCJG5672R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SneakersInAir/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "By allowing access to your microphone, yuo'll able to make a vocal reasearch";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "By allowing access to your microphone, yuo'll able to make a vocal reasearch";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -321,9 +342,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SneakersInAir/Preview Content\"";
-				DEVELOPMENT_TEAM = 85TW94Y6A7;
+				DEVELOPMENT_TEAM = 7DCJG5672R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SneakersInAir/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "By allowing access to your microphone, yuo'll able to make a vocal reasearch";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "By allowing access to your microphone, yuo'll able to make a vocal reasearch";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
