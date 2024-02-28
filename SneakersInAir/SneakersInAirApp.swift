@@ -38,6 +38,11 @@ struct SneakersInAirApp: App {
                         Image(systemName: "calendar.badge.exclamationmark")
                         Text("Drops")
                     }
+                AboutUsView()
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
             }.accentColor(CustomColor.CustomOrange)
         }
     }
