@@ -11,13 +11,12 @@ import PopupView
 struct CameraView: View {
     
     @ObservedObject var cameraViewModel = CameraViewModel()
-    var visionAPIViewModel = VisionAPIViewModel()
+    var apiManager = APIManager()
     
     @State var image = UIImage(named: "ff")
     @State var isShowingPopup: Bool = false
     @State var shoeName: String = "tt"
     @State var shoeVariant: String = "ttt"
-    var response = ""
     
     var body: some View {
         GeometryReader { geometry in
@@ -56,8 +55,18 @@ struct CameraView: View {
                         cameraViewModel.captureImage()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             image = cameraViewModel.getImage()
-                            visionAPIViewModel.getShoeName(url: cameraViewModel.getImagePath())
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            apiManager.uploadImageToImgur(image: image!)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                if let imgurLink = apiManager.imgurLink {
+                                    apiManager.fetchDataFromServer(imageUrl: imgurLink)
+                                }
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 20){
+                                if let imgurDeleteHash = apiManager.deleteHash {
+                                    apiManager.deleteImageFromImgur(deleteHash: imgurDeleteHash)
+                                }
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                                 isShowingPopup.toggle()
                             }
                         }
