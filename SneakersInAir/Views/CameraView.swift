@@ -11,54 +11,65 @@ import PopupView
 struct CameraView: View {
     
     @ObservedObject var cameraViewModel = CameraViewModel()
-    var visionAPIViewModel = VisionAPIViewModel()
+    var apiManager = APIManager()
     
     @State var image = UIImage(named: "ff")
     @State var isShowingPopup: Bool = false
-    @State var shoeName: String = "tt"
-    @State var shoeVariant: String = "ttt"
-    var response = ""
+    @State var shoeName: String = "test"
+    @State var shoeImageLink: URL = URL(string: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/3914f9b5-be4f-4a18-8a2c-c03a65158ffa/scarpa-jordan-true-flight-J5Ntdp.png")!
+    @State var uiImageView: UIImageView = UIImageView()
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 CameraPreview(session: cameraViewModel.session)
-                /*
-                PopupShoeView(shoeName: "aaaaa", shoeVariant: "aaaaa")
-                    .popup(isPresented: $isShowingPopup) {
-                } customize: {
-                    $0
-                        .type(.floater())
-                        .position(.top)
-                        .animation(.spring())
-                        .closeOnTapOutside(true)
-                        .backgroundColor(.black.opacity(0.5))
-                }
-                 */
+                
                 VStack(spacing: 0) {
                     Button(action: {
-                        // Call method to on/off flash light
+                        cameraViewModel.switchFlash()
                     }, label: {
                         Image(systemName: cameraViewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
-                            .font(.system(size: 20, weight: .medium, design: .default))
+                            .font(.system(size: 30, weight: .medium, design: .default))
                     })
                     .accentColor(cameraViewModel.isFlashOn ? .yellow : .white)
+                    .popup(isPresented: $isShowingPopup, view: {
+                        PopupShoeView(shoeName: $shoeName, uiImageView: $uiImageView)
+                    }, customize: {
+                        $0
+                            .type(.floater())
+                            .position(.top)
+                            .animation(.spring())
+                            .closeOnTapOutside(true)
+                    })
                     
                     Spacer()
-                    
-                    Image(uiImage: image!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 60, height: 60)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     Button(action: {
                         cameraViewModel.captureImage()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             image = cameraViewModel.getImage()
-                            visionAPIViewModel.getShoeName(url: cameraViewModel.getImagePath())
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                                isShowingPopup.toggle()
+                            apiManager.uploadImageToImgur(image: image!)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                                if let imgurLink = apiManager.imgurLink {
+                                    apiManager.fetchDataFromServer(imageUrl: imgurLink)
+                                }
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+                                shoeName = apiManager.shoeName ?? "nonarriva"
+                                shoeImageLink = apiManager.shoeImageLink ?? URL(string: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/1cf08343-a624-4277-947a-5aa082664e84/scarpa-jordan-true-flight-J5Ntdp.png")!
+                                print(shoeImageLink.absoluteString)
+                                uiImageView.downloaded(from: shoeImageLink)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                                    isShowingPopup = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                        isShowingPopup = false
+                                    }
+                                }
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 60){
+                                if let imgurDeleteHash = apiManager.deleteHash {
+                                    apiManager.deleteImageFromImgur(deleteHash: imgurDeleteHash)
+                                }
                             }
                         }
                     }) {
