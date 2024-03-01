@@ -26,20 +26,23 @@ struct CameraView: View {
                 
                 VStack(spacing: 0) {
                     Button(action: {
-                        // Call method to on/off flash light
+                        cameraViewModel.switchFlash()
                     }, label: {
                         Image(systemName: cameraViewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
-                            .font(.system(size: 20, weight: .medium, design: .default))
+                            .font(.system(size: 30, weight: .medium, design: .default))
                     })
                     .accentColor(cameraViewModel.isFlashOn ? .yellow : .white)
+                    .popup(isPresented: $isShowingPopup, view: {
+                        PopupShoeView(shoeName: $shoeName, uiImageView: $uiImageView)
+                    }, customize: {
+                        $0
+                            .type(.floater())
+                            .position(.top)
+                            .animation(.spring())
+                            .closeOnTapOutside(true)
+                    })
                     
                     Spacer()
-                    
-                    Image(uiImage: image!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 60, height: 60)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     Button(action: {
                         cameraViewModel.captureImage()
@@ -78,15 +81,7 @@ struct CameraView: View {
                                     .stroke(Color.black.opacity(0.8), lineWidth: 2)
                                     .frame(width: 59, height: 59, alignment: .center)
                             )
-                    }.popup(isPresented: $isShowingPopup, view: {
-                        PopupShoeView(shoeName: $shoeName, uiImageView: $uiImageView)
-                    }, customize: {
-                        $0
-                            .type(.floater())
-                            .position(.top)
-                            .animation(.spring())
-                            .closeOnTapOutside(true)
-                    })
+                    }
                 }
                 .padding(20)
             }
