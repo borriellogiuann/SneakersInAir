@@ -14,7 +14,8 @@ class APIManager: ObservableObject{
     
     @Published var imgurLink: String?
     @Published var deleteHash: String?
-    @Published var json: Data?
+    @Published var shoeName: String?
+    @Published var shoeImageLink: URL?
     
     func getImagePath() -> URL{
         var URL: URL = URL(fileURLWithPath: "")
@@ -96,7 +97,6 @@ class APIManager: ObservableObject{
             print ("error url")
             return
         }
-        print(url)
         var request = URLRequest(url: url)
         
         request.httpMethod = "DELETE"
@@ -115,29 +115,42 @@ class APIManager: ObservableObject{
     }
     
     func fetchDataFromServer(imageUrl: String) {
-        let urlString = "https://sneakerinairapi-419f7e5625dd.herokuapp.com/api/process-image?imageUrl=\(imageUrl)"
+        let url = URL(string: "https://sneakerinairapi-419f7e5625dd.herokuapp.com/api/textFormatter?imageUrl=\(imageUrl)")
         
-        if let url = URL(string: urlString) {
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                if let error = error {
-                    print("Errore nella chiamata al server:", error.localizedDescription)
-                    return
-                }
-                
-                if let data = data {
-                    do {
-                        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                        print("JSON da heroku ricevuto:", json ?? "Nessun dato")
-                    } catch {
-                        print("Errore nella decodifica JSON:", error.localizedDescription)
-                    }
-                }
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            print("error: \(String(describing: error))")
+            let json = JSON(data)
+            let shoeName = json["name"].string
+            print("shoename: \(shoeName)")
+            var urlComponents = URLComponents(string: "https://sneakerinairapi-419f7e5625dd.herokuapp.com")
+            urlComponents?.path = "/api/snksJSON"
+            urlComponents?.queryItems = [
+                URLQueryItem(
+                    name: "snksName",
+                    value: shoeName
+                )
+            ]
+            
+            let url2 = urlComponents?.url
+            print("url2: " + url2!.absoluteString)
+            var request2 = URLRequest(url: url2!)
+            request2.httpMethod = "GET"
+            let task2 = URLSession.shared.dataTask(with: request2) { data2, response2, error2 in
+                print("error2: \(String(describing: error2))")
+                let json2 = JSON(data2)
+                print("json2: \(json2["shoeName"].string)")
+                self.shoeName = json2["shoeName"].string
+                self.shoeImageLink = URL(string: json2["thumbnail"].string!)
             }
-            task.resume()
-        } else {
-            print("URL non valido.")
+            task2.resume()
         }
+        task.resume()
     }
+    
+    
     
 }
 
