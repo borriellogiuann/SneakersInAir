@@ -14,6 +14,7 @@
 		5458F8762B8CAD1900601484 /* CameraDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5458F8752B8CAD1900601484 /* CameraDelegate.swift */; };
 		5458F87D2B8DD4D400601484 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 5458F87C2B8DD4D400601484 /* PopupView */; };
 		5458F87F2B8DD50300601484 /* PopupShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5458F87E2B8DD50300601484 /* PopupShoeView.swift */; };
+		54D973462B95DB1400A05671 /* PhotoPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D973452B95DB1400A05671 /* PhotoPickerViewModel.swift */; };
 		54E837232B8FF06800C924F2 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E837222B8FF06800C924F2 /* APIManager.swift */; };
 		54E837262B8FF2C300C924F2 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 54E837252B8FF2C300C924F2 /* Alamofire */; };
 		54E837292B8FF3A100C924F2 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 54E837282B8FF3A100C924F2 /* SwiftyJSON */; };
@@ -33,6 +34,7 @@
 		5458F8732B8CA9FF00601484 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		5458F8752B8CAD1900601484 /* CameraDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraDelegate.swift; sourceTree = "<group>"; };
 		5458F87E2B8DD50300601484 /* PopupShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupShoeView.swift; sourceTree = "<group>"; };
+		54D973452B95DB1400A05671 /* PhotoPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewModel.swift; sourceTree = "<group>"; };
 		54E837222B8FF06800C924F2 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		BC0400FB2B7B6C90004DA9A0 /* SneakersInAir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SneakersInAir.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC0400FE2B7B6C90004DA9A0 /* SneakersInAirApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SneakersInAirApp.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			children = (
 				5458F86F2B8CA80300601484 /* CameraViewModel.swift */,
 				54E837222B8FF06800C924F2 /* APIManager.swift */,
+				54D973452B95DB1400A05671 /* PhotoPickerViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC3B34972B7B80EA009587CA /* FavoritesView.swift in Sources */,
+				54D973462B95DB1400A05671 /* PhotoPickerViewModel.swift in Sources */,
 				BC3B34952B7B7752009587CA /* DropView.swift in Sources */,
 				BC9473912B835BD700C92C85 /* ExploreView.swift in Sources */,
 				5458F8762B8CAD1900601484 /* CameraDelegate.swift in Sources */,
