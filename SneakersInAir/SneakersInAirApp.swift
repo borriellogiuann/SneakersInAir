@@ -15,30 +15,10 @@ struct CustomColor {
 
 @main
 struct SneakersInAirApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            TabView {
-                CameraView()
-                    .tabItem {
-                        Image(systemName: "plus.viewfinder")
-                        Text("Scan")
-                    }
-                FavoritesView()
-                    .tabItem {
-                        Image(systemName: "heart")
-                        Text("Favorites")
-                    }
-                ExploreView()
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("Explore")
-                    }
-                DropView()
-                    .tabItem {
-                        Image(systemName: "calendar.badge.exclamationmark")
-                        Text("Drops")
-                    }
-            }.accentColor(CustomColor.CustomOrange)
+            ContentView()
         }
     }
 }

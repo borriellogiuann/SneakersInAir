@@ -14,23 +14,22 @@ struct PopupShoeView: View {
     
     var body: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 26.0)
-                .foregroundStyle(.customblack)
-                .frame(width: 302, height: 122)
-                .shadow(radius: 15)
+            
             RoundedRectangle(cornerRadius: 25.0)
                 .foregroundStyle(.white)
-                .frame(width: 300, height: 120)
+                .frame(width: 350, height: 120)
+                .shadow(radius: 25)
             HStack{
                 Image(uiImage: uiImageView.image!)
                     .resizable()
-                    .frame(maxWidth: 125, maxHeight: 75)
-                    .padding()
+                    .frame(maxWidth: 125, maxHeight: 100)
+                    .padding(.leading, 30)
+                Spacer()
                 Text("\(shoeName)")
                     .foregroundStyle(.customblack)
-                    .frame(maxWidth: 100)
+                    .frame(maxWidth: 150)
                     .font(.body)
-                    .padding(/*@START_MENU_TOKEN@*/EdgeInsets()/*@END_MENU_TOKEN@*/)
+                    .padding(.trailing, 50)
             }
         }
     }

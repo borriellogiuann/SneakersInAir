@@ -6,37 +6,41 @@
 //
 
 import SwiftUI
-import PhotosUI
-
-@MainActor
-final class PhotoPickerViewModel: ObservableObject{
-    
-    @Published private(set) var selectedImage: UIImage? = nil
-    @Published var imageSelection: PhotosPickerItem? = nil {
-        didSet {
-            setImage (from: imageSelection)
-        }
-    }
-    
-    private func setImage (from selection: PhotosPickerItem?) {
-        guard let selection else { return }
-        
-        Task {
-            if let data = try? await selection.loadTransferable (type: Data.self) {
-                if let uiImage = UIImage (data: data) {
-                    selectedImage = uiImage
-                    return
-                }
-            }
-        }
-    }
-}
 
 struct ContentView: View {
     
-    @StateObject private var viewModel = PhotoPickerViewModel()
+    let currentSystemScheme = UITraitCollection.current.userInterfaceStyle
     
     var body: some View {
+        @Environment(\.colorScheme) var colorScheme: ColorScheme
+        TabView {
+            CameraView()
+                .tabItem {
+                    Image(systemName: "plus.viewfinder")
+                    Text("Scan")
+                }
+            FavoritesView()
+                .tabItem {
+                    Image(systemName: "heart")
+                    Text("Favorites")
+                }
+            ExploreView()
+                .tabItem {
+                    Image(systemName: "magnifyingglass")
+                    Text("Explore")
+                }
+            DropView()
+                .tabItem {
+                    Image(systemName: "calendar.badge.exclamationmark")
+                    Text("Drops")
+                }
+        }
+        .accentColor(CustomColor.CustomOrange)
+        
+        .onChange(of: colorScheme, initial: true, {
+            UITabBar.appearance().backgroundColor = schemeTransform(userInterfaceStyle: currentSystemScheme) == .light ? UIColor.customwhite : UIColor.customblack
+        })
+        /*
         VStack(spacing: 40) {
             Text ("Scanner")
             
@@ -51,9 +55,18 @@ struct ContentView: View {
                 Image(systemName: "heart")
             }
         }
+        */
     }
 }
 
 #Preview {
     ContentView()
 }
+
+func schemeTransform(userInterfaceStyle:UIUserInterfaceStyle) -> ColorScheme {
+    if userInterfaceStyle == .light {
+        return .light
+    }else if userInterfaceStyle == .dark {
+        return .dark
+    }
+    return .light}
