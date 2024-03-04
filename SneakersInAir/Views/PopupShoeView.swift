@@ -15,8 +15,8 @@ struct PopupShoeView: View {
     var body: some View {
         HStack{
             Image(systemName: "shoe")
-            Text("\(shoeName)\n\(shoeVariant)")
-                .foregroundStyle(.customblack)
+//            Text("\(shoeName)\n\(shoeVariant)")
+//                .foregroundStyle(.customblack)
         }
     }
 }
