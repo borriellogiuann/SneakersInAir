@@ -24,6 +24,17 @@ KIXS is built using the following frameworks and technologies:
 ## Installation
 To experience the magic of KIXS, simply download the app the [HERE from TestFlight](https://testflight.apple.com/join/6ghBwLyU). and start exploring the world of sneakers in a whole new way!
 
+Or:
+
+1. Clone the repository to your local machine.
+   ```bash
+   git clone https://github.com/Nexuss05/SneakersInAir.git
+
+2. Open the project in Xcode.
+
+3. Build and run the app on your preferred simulator or device.
+
+
 ## Feedback
 We value your feedback! If you have any suggestions, encounter issues, or want to share your love for KIXS, please feel free to reach out to us through the app or on our GitHub repository.
 
