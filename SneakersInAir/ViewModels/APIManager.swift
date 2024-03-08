@@ -16,6 +16,7 @@ class APIManager: ObservableObject{
     @Published var deleteHash: String?
     @Published var shoeName: String?
     @Published var shoeImageLink: URL?
+    @Published var finalJson: JSON?
     
     func getImagePath() -> URL{
         var URL: URL = URL(fileURLWithPath: "")
@@ -125,7 +126,7 @@ class APIManager: ObservableObject{
             let json = JSON(data)
             let shoeName = json["name"].string
             print("shoename: \(shoeName)")
-            self.finalDataFromServer(shoeName: shoeName!)
+            self.finalDataFromServer(shoeName: shoeName ?? "Not Found")
         }
         task.resume()
     }
@@ -150,6 +151,7 @@ class APIManager: ObservableObject{
             print("json2: \(json2["shoeName"].string)")
             self.shoeName = json2["shoeName"].string ?? "Shoe not found, please try again!"
             self.shoeImageLink = URL(string: json2["thumbnail"].string ?? "https://i.imgur.com/UzNS5sB.png")
+            self.finalJson = json2
         }
         task2.resume()
     }

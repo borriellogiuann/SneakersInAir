@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftyJSON
 
 struct ContentView: View {
     
@@ -13,33 +14,13 @@ struct ContentView: View {
     
     var body: some View {
         @Environment(\.colorScheme) var colorScheme: ColorScheme
-        TabView {
             CameraView()
-                .tabItem {
-                    Image(systemName: "plus.viewfinder")
-                    Text("Scan")
-                }
-            FavoritesView()
-                .tabItem {
-                    Image(systemName: "heart")
-                    Text("Favorites")
-                }
-            ExploreView()
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Explore")
-                }
-            DropView()
-                .tabItem {
-                    Image(systemName: "calendar.badge.exclamationmark")
-                    Text("Drops")
-                }
-        }
-        .accentColor(CustomColor.CustomOrange)
+            
+
         
-        .onChange(of: colorScheme, initial: true, {
+        .onAppear(){
             UITabBar.appearance().backgroundColor = schemeTransform(userInterfaceStyle: currentSystemScheme) == .light ? UIColor.customwhite : UIColor.customblack
-        })
+        }
         /*
         VStack(spacing: 40) {
             Text ("Scanner")
