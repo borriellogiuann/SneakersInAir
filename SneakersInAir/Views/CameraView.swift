@@ -26,14 +26,23 @@ struct CameraView: View {
     @State var fill: CGFloat = 0.0
     @State var cameraAnimationNumber: Double = 0
     @State var aboutUs = false
+    @State var pictureTaken = false
     
     var body: some View {
         NavigationView{
             
             GeometryReader { geometry in
                 ZStack {
-                    CameraPreview(session: cameraViewModel.session)
-                        .ignoresSafeArea()
+                    if(!pictureTaken){
+                        CameraPreview(session: cameraViewModel.session)
+                            .ignoresSafeArea()
+                    }else{
+                        Image(uiImage: (apiManager.loadPhoto() ?? UIImage(named: "scarpavuota"))!)
+                            .resizable()
+                            .scaledToFill()
+                            .ignoresSafeArea()
+                            .frame(maxWidth: UIScreen.width/1.2, maxHeight: UIScreen.height/1.1)
+                    }
                     
                     VStack(spacing: 0) {
                         HStack{
@@ -78,6 +87,7 @@ struct CameraView: View {
                         
                         Button(action: {
                             disableCamera.toggle()
+                            cameraAnimationNumber = 0
                             DispatchQueue.main.asyncAfter(deadline: .now()+0.1){
                                 fill = 1
                             }
@@ -93,6 +103,7 @@ struct CameraView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                 image = cameraViewModel.getImage()
                                 apiManager.uploadImageToImgur(image: image!)
+                                pictureTaken = true
                                 if(cameraViewModel.isFlashOn){
                                     cameraViewModel.switchFlash()
                                 }
@@ -111,6 +122,7 @@ struct CameraView: View {
                                             disableCamera = false
                                             fill = 0.0
                                             cameraAnimationNumber = 0
+                                            pictureTaken = false
                                             
                                         }
                                     }

@@ -30,6 +30,17 @@ class APIManager: ObservableObject{
         return URL
     }
     
+    func loadPhoto() -> UIImage? {
+        let fileURL = getImagePath()
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            return UIImage(data: imageData)
+        } catch {
+            print("Error loading image : \(error)")
+        }
+        return nil
+    }
+    
     func uploadImageToImgur(image: UIImage){
         let parameters = [
             [
