@@ -37,6 +37,11 @@ class CameraViewModel: ObservableObject {
         cameraManager.stopCapturing()
     }
     
+    func switchFlash() {
+       isFlashOn.toggle()
+       cameraManager.toggleTorch(tourchIsOn: isFlashOn)
+    }
+    
     // Check for camera device permission.
     func checkForDevicePermission() {
         let videoStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
