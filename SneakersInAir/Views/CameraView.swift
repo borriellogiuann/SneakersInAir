@@ -81,6 +81,7 @@ struct CameraView: View {
                                     .position(.top)
                                     .animation(.spring())
                                     .dragToDismiss(true)
+                                    .closeOnTap(true)
                             })
                         
                         Spacer()
@@ -91,23 +92,23 @@ struct CameraView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now()+0.1){
                                 fill = 1
                             }
-                            for x in 0...25{
+                            for x in 0...30{
                                 DispatchQueue.main.asyncAfter(deadline: .now()+TimeInterval(Double(x)+1)){
-                                    cameraAnimationNumber += 4
+                                    cameraAnimationNumber += 3.35
                                     if cameraAnimationNumber >= 100 {
                                         cameraAnimationNumber = 100
                                     }
                                 }
                             }
                             cameraViewModel.captureImage()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 image = cameraViewModel.getImage()
                                 apiManager.uploadImageToImgur(image: image!)
                                 pictureTaken = true
                                 if(cameraViewModel.isFlashOn){
                                     cameraViewModel.switchFlash()
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
                                     if let imgurLink = apiManager.imgurLink {
                                         apiManager.fetchDataFromServer(imageUrl: imgurLink)
                                     }
@@ -117,7 +118,7 @@ struct CameraView: View {
                                         print(shoeImageLink.absoluteString)
                                         uiImageView.downloaded(from: shoeImageLink)
                                         json = apiManager.finalJson ?? JSON()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                                             isShowingPopup = true
                                             disableCamera = false
                                             fill = 0.0
@@ -127,7 +128,7 @@ struct CameraView: View {
                                         }
                                     }
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 25){
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 30){
                                     if let imgurDeleteHash = apiManager.deleteHash {
                                         apiManager.deleteImageFromImgur(deleteHash: imgurDeleteHash)
                                     }
@@ -155,7 +156,7 @@ struct CameraView: View {
                                             .stroke(.customorange, lineWidth: 15)
                                             .frame(width: 70, height: 70)
                                             .rotationEffect(.init(degrees: -90))
-                                            .animation(Animation.linear(duration: 25))
+                                            .animation(Animation.linear(duration: 30))
                                         
                                         Text("\(Int(cameraAnimationNumber))%")
                                             .foregroundStyle(.customblack)
