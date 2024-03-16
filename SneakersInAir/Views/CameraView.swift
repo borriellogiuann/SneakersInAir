@@ -13,8 +13,8 @@ import SwiftyJSON
 struct CameraView: View {
     
     @ObservedObject var cameraViewModel = CameraViewModel()
-    var apiManager = APIManager()
-    @StateObject var viewModel = PhotoPickerViewModel()
+    @ObservedObject var apiManager = APIManager()
+    @ObservedObject var viewModel = PhotoPickerViewModel()
     
     @State var image = UIImage(named: "ff")
     @State var isShowingPopup: Bool = false
@@ -27,6 +27,8 @@ struct CameraView: View {
     @State var cameraAnimationNumber: Double = 0
     @State var aboutUs = false
     @State var pictureTaken = false
+    @State var imgurLink = ""
+    @State var isLoading = false
     
     var body: some View {
         NavigationView{
@@ -81,6 +83,7 @@ struct CameraView: View {
                                     .position(.top)
                                     .animation(.spring())
                                     .dragToDismiss(true)
+                                    .closeOnTap(true)
                             })
                         
                         Spacer()
@@ -91,109 +94,54 @@ struct CameraView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now()+0.1){
                                 fill = 1
                             }
-                            for x in 0...25{
-                                DispatchQueue.main.asyncAfter(deadline: .now()+TimeInterval(Double(x)+1)){
-                                    cameraAnimationNumber += 4
-                                    if cameraAnimationNumber >= 100 {
-                                        cameraAnimationNumber = 100
-                                    }
-                                }
-                            }
                             cameraViewModel.captureImage()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 image = cameraViewModel.getImage()
-                                apiManager.uploadImageToImgur(image: image!)
                                 pictureTaken = true
                                 if(cameraViewModel.isFlashOn){
                                     cameraViewModel.switchFlash()
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                                    if let imgurLink = apiManager.imgurLink {
-                                        apiManager.fetchDataFromServer(imageUrl: imgurLink)
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-                                        shoeName = apiManager.shoeName ?? "nonarriva"
-                                        shoeImageLink = apiManager.shoeImageLink!
-                                        print(shoeImageLink.absoluteString)
-                                        uiImageView.downloaded(from: shoeImageLink)
-                                        json = apiManager.finalJson ?? JSON()
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
-                                            isShowingPopup = true
-                                            disableCamera = false
-                                            fill = 0.0
-                                            cameraAnimationNumber = 0
-                                            pictureTaken = false
-                                            
-                                        }
-                                    }
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 25){
-                                    if let imgurDeleteHash = apiManager.deleteHash {
-                                        apiManager.deleteImageFromImgur(deleteHash: imgurDeleteHash)
-                                    }
+                                Task{
+                                    await upload(image: image!)
+                                    await fetchDataFromServer()
+                                    await updateImageOnUI()
+                                    await deleteImageFromImgur()
                                 }
                             }
-                        }) {
+                        }, label: {
                             ZStack{
                                 Circle()
-                                    .foregroundColor(.white)
-                                    .frame(width: 70, height: 70, alignment: .center)
+                                    .foregroundColor(.customwhite)
+                                    .frame(width: UIScreen.width/5, height: UIScreen.height/8, alignment: .center)
                                     .overlay(
                                         Circle()
                                             .stroke(Color.black.opacity(0.8), lineWidth: 2)
-                                            .frame(width: 59, height: 59, alignment: .center)
+                                            .frame(width: UIScreen.width/5.7, height: UIScreen.height/9, alignment: .center)
                                     )
                                 if(disableCamera){
                                     ZStack {
-                                        
+                                     
                                         Circle()
-                                            .stroke(Color(.systemGray5), lineWidth: 15)
-                                            .frame(width: 70, height: 70)
-                                        
+                                            .stroke(Color(.systemGray5), lineWidth: 14)
+                                            .frame(width: UIScreen.width/5, height: UIScreen.height/8)
+                             
                                         Circle()
-                                            .trim(from: 0, to: fill)
-                                            .stroke(.customorange, lineWidth: 15)
-                                            .frame(width: 70, height: 70)
-                                            .rotationEffect(.init(degrees: -90))
-                                            .animation(Animation.linear(duration: 25))
-                                        
-                                        Text("\(Int(cameraAnimationNumber))%")
-                                            .foregroundStyle(.customblack)
-                                            .font(.body)
+                                            .trim(from: 0, to: 0.2)
+                                            .stroke(Color.customorange, lineWidth: 7)
+                                            .frame(width: UIScreen.width/5, height: UIScreen.height/8)
+                                            .rotationEffect(Angle(degrees: isLoading ? 360 : 0))
+                                            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+                                            .onAppear() {
+                                                self.isLoading = true
+                                        }
                                     }
                                 }
                             }
-                        }
+                        })
                         .disabled(disableCamera ? true : false)
+                        .padding(.bottom, -20)
                     }
-                    .padding(35)
-                    /*
-                     HStack{
-                     VStack{
-                     Spacer()
-                     VStack() {
-                     PhotosPicker(selection: $viewModel.imageSelection){
-                     if let image = viewModel.selectedImage {
-                     Image (uiImage: image)
-                     .resizable ()
-                     .scaledToFill()
-                     .frame(width: 60, height: 60)
-                     .cornerRadius(10)
-                     }else{
-                     Image("scarpavuota")
-                     .resizable()
-                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                     .frame(width: 60, height: 60)
-                     
-                     }
-                     }
-                     .padding(20)
-                     .padding(.bottom, 20)
-                     }
-                     }
-                     Spacer()
-                     }
-                     */
+                    .padding(40)
                 }
             }
             .onAppear {
@@ -202,6 +150,64 @@ struct CameraView: View {
         }
         .tint(.customorange)
     }
+    
+    func upload(image: UIImage) async {
+        print("1. Uploading image")
+        do {
+            try await apiManager.uploadImageToImgur(image: image)
+            print("1. ✅")
+        } catch {
+            print("An error occurred in uploading image to imgur")
+        }
+    }
+    
+    func fetchDataFromServer() async {
+        print("2. Fetching server data")
+        do {
+            /// Fetch data from server
+            try await apiManager.fetchDataFromServer(imageUrl: apiManager.imgurLink ?? "No imgur link")
+            print("2. ✅")
+        } catch {
+            print("An error occurred in getting infos from the server")
+        }
+        
+        shoeName = apiManager.shoeName!
+        shoeImageLink = apiManager.shoeImageLink!
+        json = apiManager.finalJson!
+        
+    }
+    
+    func updateImageOnUI() async {
+        print("3. Update UIImage with image from server")
+        do {
+            /// Place the image in the UIImageView
+            try await uiImageView.downloaded(from: shoeImageLink)
+            print("3. ✅")
+        } catch {
+            print("An error occurred in getting the photo")
+        }
+        
+        isShowingPopup = true
+        disableCamera = false
+        fill = 0.0
+        cameraAnimationNumber = 0
+        pictureTaken = false
+    }
+    
+    func deleteImageFromImgur() async {
+        print("4. Delete image from server")
+        do {
+            /// Delete the image
+            try await apiManager.deleteImageFromImgur(deleteHash: apiManager.deleteHash ?? "no delete hash")
+            print("delete hash" + (apiManager.deleteHash ?? "no delete hash"))
+            print("4. ✅")
+        }
+        catch {
+            print("An error occurred in deleting the photo")
+        }
+        
+    }
+    
 }
 
 
