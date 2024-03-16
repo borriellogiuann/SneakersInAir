@@ -41,7 +41,7 @@ class APIManager: ObservableObject{
         return nil
     }
     
-    func uploadImageToImgur(image: UIImage){
+    func uploadImageToImgur(image: UIImage) async throws{
         let parameters = [
             [
                 "key": "image",
@@ -50,7 +50,6 @@ class APIManager: ObservableObject{
         
         let boundary = "Boundary-\(UUID().uuidString)"
         var body = Data()
-        var error: Error? = nil
         for param in parameters {
             if param["disabled"] != nil { continue }
             let paramName = param["key"]!
@@ -84,25 +83,22 @@ class APIManager: ObservableObject{
         request.httpMethod = "POST"
         request.httpBody = postData
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data
-            else {
-                print(String(describing: error))
-                return
-            }
+        do{
+            let (data, _) = try await URLSession.shared.data(for: request)
             let json = JSON(data)
-            self.imgurLink = json["data"]["link"].string
-            self.deleteHash = json["data"]["deletehash"].string
-            print(self.imgurLink)
-            print(self.deleteHash)
-            
+            await MainActor.run{
+                self.imgurLink = json["data"]["link"].string
+                self.deleteHash = json["data"]["deletehash"].string
+            }
+            print(self.imgurLink!)
+            print(self.deleteHash!)
+        }catch{
+            print("error 1 upload imgur")
         }
-        
-        task.resume()
         
     }
     
-    func deleteImageFromImgur(deleteHash: String) {
+    func deleteImageFromImgur(deleteHash: String) async throws{
         guard let url = URL(string: "https://api.imgur.com/3/image/\(deleteHash)")
         else {
             print ("error url")
@@ -113,33 +109,30 @@ class APIManager: ObservableObject{
         request.httpMethod = "DELETE"
         request.setValue("Client-ID 7bc8b6980a0a59c", forHTTPHeaderField: "Authorization")
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data
-            else {
-                print(String(describing: error))
-                return
-            }
-            let json = JSON(data)
-            print(json["success"])
-        }
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let json = JSON(data)
+        print(json["success"])
+        
     }
     
-    func fetchDataFromServer(imageUrl: String) {
+    func fetchDataFromServer(imageUrl: String) async throws{
         let url = URL(string: "https://sneakerinairapi-419f7e5625dd.herokuapp.com/api/snksJSON?imageUrl=\(imageUrl)")
         
         var request = URLRequest(url: url!)
         request.httpMethod = "GET"
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            print("error: \(String(describing: error))")
-            let json = JSON(data)
-            print("json: \(json["shoeName"].string)")
+        let(data, _) = try await URLSession.shared.data(for: request)
+        
+        let json = JSON(data)
+        
+        print("json: \(String(describing: json["shoeName"].string))")
+        
+        await MainActor.run{
             self.shoeName = json["shoeName"].string ?? "Shoe not found, please try again!"
             self.shoeImageLink = URL(string: json["thumbnail"].string ?? "https://i.imgur.com/UzNS5sB.png")
             self.finalJson = json
         }
-        task.resume()
+
     }
     
     
