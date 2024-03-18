@@ -23,7 +23,7 @@ struct PopupShoeView: View {
                     .shadow(radius: 25)
                     .overlay{
                         HStack{
-                            Image(uiImage: uiImageView.image!)
+                            Image(uiImage: (uiImageView.image ?? UIImage(named: "scarpavuota"))!)
                                 .resizable()
                                 .frame(maxWidth: 125, maxHeight: 100)
                                 .padding(.leading, 30)

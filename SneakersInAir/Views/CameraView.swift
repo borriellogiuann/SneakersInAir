@@ -133,6 +133,7 @@ struct CameraView: View {
                                             .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
                                             .onAppear() {
                                                 self.isLoading = true
+                                                self.isShowingPopup = false
                                         }
                                     }
                                 }
@@ -205,7 +206,7 @@ struct CameraView: View {
         catch {
             print("An error occurred in deleting the photo")
         }
-        
+        isLoading = false
     }
     
 }
