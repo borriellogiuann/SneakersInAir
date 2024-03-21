@@ -37,6 +37,11 @@ class CameraViewModel: ObservableObject {
         cameraManager.stopCapturing()
     }
     
+    func switchFlash() {
+       isFlashOn.toggle()
+       cameraManager.toggleTorch(tourchIsOn: isFlashOn)
+    }
+    
     // Check for camera device permission.
     func checkForDevicePermission() {
         let videoStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
@@ -74,7 +79,6 @@ class CameraViewModel: ObservableObject {
     }
     
     func getImage() -> UIImage{
-        print("getting new image")
         var image: UIImage = UIImage()
         let nsDocumentDirectory = FileManager.SearchPathDirectory.documentDirectory
         let nsUserDomainMask    = FileManager.SearchPathDomainMask.userDomainMask
@@ -85,6 +89,7 @@ class CameraViewModel: ObservableObject {
            image    = UIImage(contentsOfFile: imageURL.path)!
            // Do whatever you want with the image
         }
+        print("image taken and can be used")
         return image
     }
     

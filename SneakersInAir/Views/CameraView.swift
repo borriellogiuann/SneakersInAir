@@ -7,78 +7,211 @@
 
 import SwiftUI
 import PopupView
+import _PhotosUI_SwiftUI
+import SwiftyJSON
 
 struct CameraView: View {
     
     @ObservedObject var cameraViewModel = CameraViewModel()
-    var visionAPIViewModel = VisionAPIViewModel()
+    @ObservedObject var apiManager = APIManager()
+    @ObservedObject var cameraManager = CameraManager()
+    //@ObservedObject var viewModel = PhotoPickerViewModel()
     
-    @State var image = UIImage(named: "ff")
+    @State var image: UIImage?
     @State var isShowingPopup: Bool = false
-    @State var shoeName: String = "tt"
-    @State var shoeVariant: String = "ttt"
-    var response = ""
+    @State var shoeName: String = "test"
+    @State var shoeImageLink: URL = URL(string: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/3914f9b5-be4f-4a18-8a2c-c03a65158ffa/scarpa-jordan-true-flight-J5Ntdp.png")!
+    @State var json: JSON = JSON()
+    @State var uiImageView: UIImageView = UIImageView()
+    @State var disableCamera: Bool = false
+    @State var fill: CGFloat = 0.0
+    @State var cameraAnimationNumber: Double = 0
+    @State var aboutUs = false
+    @State var pictureTaken = false
+    @State var imgurLink = ""
+    @State var isLoading = false
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                CameraPreview(session: cameraViewModel.session)
-                /*
-                PopupShoeView(shoeName: "aaaaa", shoeVariant: "aaaaa")
-                    .popup(isPresented: $isShowingPopup) {
-                } customize: {
-                    $0
-                        .type(.floater())
-                        .position(.top)
-                        .animation(.spring())
-                        .closeOnTapOutside(true)
-                        .backgroundColor(.black.opacity(0.5))
-                }
-                 */
-                VStack(spacing: 0) {
-                    Button(action: {
-                        // Call method to on/off flash light
-                    }, label: {
-                        Image(systemName: cameraViewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
-                            .font(.system(size: 20, weight: .medium, design: .default))
-                    })
-                    .accentColor(cameraViewModel.isFlashOn ? .yellow : .white)
-                    
-                    Spacer()
-                    
-                    Image(uiImage: image!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 60, height: 60)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    
-                    Button(action: {
-                        cameraViewModel.captureImage()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            image = cameraViewModel.getImage()
-                            visionAPIViewModel.getShoeName(url: cameraViewModel.getImagePath())
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                                isShowingPopup.toggle()
-                            }
-                        }
-                    }) {
-                        Circle()
-                            .foregroundColor(.white)
-                            .frame(width: 70, height: 70, alignment: .center)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.black.opacity(0.8), lineWidth: 2)
-                                    .frame(width: 59, height: 59, alignment: .center)
-                            )
+        NavigationView{
+            
+            GeometryReader { geometry in
+                ZStack {
+                    if(!pictureTaken){
+                        CameraPreview(session: cameraViewModel.session)
+                            .ignoresSafeArea()
+                    }else{
+                        Image(uiImage: (image ?? UIImage(named: "scarpavuota"))!)
+                            .resizable()
+                            .scaledToFill()
+                            .ignoresSafeArea()
+                            .frame(maxWidth: UIScreen.width/1.2, maxHeight: UIScreen.height/1.1)
                     }
+                    
+                    VStack(spacing: 0) {
+                        HStack{
+                            Button(action: {
+                                cameraViewModel.switchFlash()
+                            }, label: {
+                                Image(systemName: cameraViewModel.isFlashOn ? "bolt.fill" : "bolt.slash.fill")
+                                    .font(.system(size: 30, weight: .medium, design: .default))
+                            })
+                            .foregroundStyle(cameraViewModel.isFlashOn ? .yellow : .white)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                aboutUs = true
+                            }, label: {
+                                Image(systemName: "info.circle")
+                                    .font(.system(size: 30, weight: .medium, design: .default))
+                            })
+                            .foregroundStyle(.white)
+                            .sheet(isPresented: $aboutUs, content: {
+                                AboutUsView()
+                            })
+                        }
+                        
+                        
+                        Text("")
+                            .padding(0)
+                            .popup(isPresented: $isShowingPopup, view: {
+                                NavigationLink(destination: FullShoeView(json: $json, shoeImage: $uiImageView), label: {
+                                    PopupShoeView(shoeName: $shoeName, uiImageView: $uiImageView, json: $json)
+                                })
+                            }, customize: {
+                                $0
+                                    .type(.floater())
+                                    .position(.top)
+                                    .animation(.spring())
+                                    .dragToDismiss(true)
+                                    .closeOnTap(true)
+                            })
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            disableCamera.toggle()
+                            cameraAnimationNumber = 0
+                            cameraViewModel.captureImage()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                                fill = 1
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                image = cameraViewModel.getImage()
+                                pictureTaken = true
+                                if(cameraViewModel.isFlashOn){
+                                    cameraViewModel.switchFlash()
+                                }
+                                
+                                Task{
+                                    await upload(image: image!)
+                                    await fetchDataFromServer()
+                                    await updateImageOnUI()
+                                    await deleteImageFromImgur()
+                                }
+                                 
+                            }
+                        }, label: {
+                            ZStack{
+                                Circle()
+                                    .foregroundColor(.customwhite)
+                                    .frame(width: UIScreen.width/5, height: UIScreen.height/8, alignment: .center)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.black.opacity(0.8), lineWidth: 2)
+                                            .frame(width: UIScreen.width/5.7, height: UIScreen.height/9, alignment: .center)
+                                    )
+                                if(disableCamera){
+                                    ZStack {
+                                     
+                                        Circle()
+                                            .stroke(Color(.systemGray5), lineWidth: 14)
+                                            .frame(width: UIScreen.width/5, height: UIScreen.height/8)
+                             
+                                        Circle()
+                                            .trim(from: 0, to: 0.2)
+                                            .stroke(Color.customorange, lineWidth: 7)
+                                            .frame(width: UIScreen.width/5, height: UIScreen.height/8)
+                                            .rotationEffect(Angle(degrees: isLoading ? 360 : 0))
+                                            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+                                            .onAppear() {
+                                                self.isLoading = true
+                                                self.isShowingPopup = false
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .disabled(disableCamera ? true : false)
+                        .padding(.bottom, -20)
+                    }
+                    .padding(40)
                 }
-                .padding(20)
+            }
+            .onAppear {
+                cameraViewModel.checkForDevicePermission()
             }
         }
-        .onAppear {
-            cameraViewModel.checkForDevicePermission()
+        .tint(.customorange)
+    }
+    
+    func upload(image: UIImage) async {
+        print("1. Uploading image")
+        do {
+            try await apiManager.uploadImageToImgur(image: image)
+            print("1. ✅")
+        } catch {
+            print("An error occurred in uploading image to imgur")
         }
     }
+    
+    func fetchDataFromServer() async {
+        print("2. Fetching server data")
+        do {
+            /// Fetch data from server
+            try await apiManager.fetchDataFromServer(imageUrl: apiManager.imgurLink ?? "No imgur link")
+            print("2. ✅")
+        } catch {
+            print("An error occurred in getting infos from the server")
+        }
+        
+        self.shoeName = apiManager.shoeName!
+        self.shoeImageLink = apiManager.shoeImageLink!
+        self.json = apiManager.finalJson!
+        
+    }
+    
+    func updateImageOnUI() async {
+        print("3. Update UIImage with image from server")
+        do {
+            /// Place the image in the UIImageView
+            try await uiImageView.downloaded(from: shoeImageLink)
+            print("3. ✅")
+        } catch {
+            print("An error occurred in getting the photo")
+        }
+        
+        self.isShowingPopup = true
+        self.disableCamera = false
+        self.fill = 0.0
+        self.cameraAnimationNumber = 0
+        self.pictureTaken = false
+    }
+    
+    func deleteImageFromImgur() async {
+        print("4. Delete image from server")
+        do {
+            /// Delete the image
+            try await apiManager.deleteImageFromImgur(deleteHash: apiManager.deleteHash ?? "no delete hash")
+            print("delete hash" + (apiManager.deleteHash ?? "no delete hash"))
+            print("4. ✅")
+        }
+        catch {
+            print("An error occurred in deleting the photo")
+        }
+        self.isLoading = false
+    }
+    
 }
 
 

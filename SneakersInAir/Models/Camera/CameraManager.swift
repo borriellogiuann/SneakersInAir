@@ -22,6 +22,8 @@ class CameraManager: ObservableObject {
  
  // Observes changes in the camera's status
  @Published var status = Status.unconfigured
+    
+    @Published private var flashMode: AVCaptureDevice.FlashMode = .off
  
  // AVCaptureSession manages the camera settings and data flow between capture inputs and outputs.
  // It can connect one or more inputs to one or more outputs
@@ -180,9 +182,39 @@ class CameraManager: ObservableObject {
           if let cameraDelegate {
              // Capture the photo with delegate
              self.photoOutput.capturePhoto(with: photoSettings, delegate: cameraDelegate)
+              print("photo taken, can be saved")
           }
        }
     }
 
+    func toggleTorch(tourchIsOn: Bool) {
+       // Access the default video capture device.
+       guard let device = AVCaptureDevice.default(for: .video) else { return }
+          // Check if the device has a torch (flashlight).
+          if device.hasTorch {
+            do {
+                // Lock the device configuration for changes.
+                try device.lockForConfiguration()
+
+                // Set the flash mode based on the torchIsOn parameter.
+                flashMode = tourchIsOn ? .on : .off
+
+                // If torchIsOn is true, turn the torch on at full intensity.
+                if tourchIsOn {
+                   try device.setTorchModeOn(level: 1.0)
+                } else {
+                   // If torchIsOn is false, turn the torch off.
+                   device.torchMode = .off
+                }
+                // Unlock the device configuration.
+                device.unlockForConfiguration()
+            } catch {
+            // Handle any errors during configuration changes.
+            print("Failed to set torch mode: \(error).")
+          }
+       } else {
+          print("Torch not available for this device.")
+       }
+    }
     
 }
