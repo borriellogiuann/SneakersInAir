@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import Alamofire
 import SwiftyJSON
 
 class APIManager: ObservableObject{
@@ -90,8 +89,8 @@ class APIManager: ObservableObject{
                 self.imgurLink = json["data"]["link"].string
                 self.deleteHash = json["data"]["deletehash"].string
             }
-            print(self.imgurLink!)
-            print(self.deleteHash!)
+            print("imgurLink: \(self.imgurLink ?? "null")")
+            print("deleteHash: \(self.deleteHash ?? "null")")
         }catch{
             print("error 1 upload imgur")
         }
@@ -109,28 +108,37 @@ class APIManager: ObservableObject{
         request.httpMethod = "DELETE"
         request.setValue("Client-ID 7bc8b6980a0a59c", forHTTPHeaderField: "Authorization")
         
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let json = JSON(data)
-        print(json["success"])
+        do{
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let json = JSON(data)
+            print("upload imgur state: \(json["success"])")
+        }catch{
+            print("error 2 delete imgur")
+        }
         
     }
     
     func fetchDataFromServer(imageUrl: String) async throws{
-        let url = URL(string: "https://sneakerinairapi-419f7e5625dd.herokuapp.com/api/snksJSON?imageUrl=\(imageUrl)")
+        guard let url = URL(string: "https://sneakerinairapi-419f7e5625dd.herokuapp.com/api/snksJSON?imageUrl=\(imageUrl)")
+        else {
+            print ("error url")
+            return
+        }
         
-        var request = URLRequest(url: url!)
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
-        let(data, _) = try await URLSession.shared.data(for: request)
-        
-        let json = JSON(data)
-        
-        print("json: \(String(describing: json["shoeName"].string))")
-        
-        await MainActor.run{
-            self.shoeName = json["shoeName"].string ?? "Shoe not found, please try again!"
-            self.shoeImageLink = URL(string: json["thumbnail"].string ?? "https://i.imgur.com/UzNS5sB.png")
-            self.finalJson = json
+        do{
+            let(data, _) = try await URLSession.shared.data(for: request)
+            let json = JSON(data)
+            await MainActor.run{
+                self.shoeName = json["shoeName"].string ?? "Shoe not found, please try again!"
+                self.shoeImageLink = URL(string: json["thumbnail"].string ?? "https://i.imgur.com/UzNS5sB.png")
+                self.finalJson = json
+            }
+            print("shoeName from json: \(String(describing: json["shoeName"].string))")
+        }catch{
+            print("error 3 fetch data from server")
         }
 
     }
