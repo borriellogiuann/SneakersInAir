@@ -18,7 +18,6 @@ class CameraDelegate: NSObject, AVCapturePhotoCaptureDelegate {
    }
  
    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-       print("capture output")
       if let error {
          print("CameraManager: Error while capturing photo: \(error)")
          completion(nil)
@@ -26,15 +25,14 @@ class CameraDelegate: NSObject, AVCapturePhotoCaptureDelegate {
       }
   
       if let imageData = photo.fileDataRepresentation(), let capturedImage = UIImage(data: imageData) {
-         saveImage(image: capturedImage)
          completion(capturedImage)
+         saveImage(image: capturedImage)
       } else {
          print("CameraManager: Image not fetched.")
       }
    }
  
     func saveImage(image: UIImage) {
-            print("save")
             guard let data = image.jpegData(compressionQuality: 1) else {
                 return
             }
@@ -43,6 +41,7 @@ class CameraDelegate: NSObject, AVCapturePhotoCaptureDelegate {
             }
             do {
                 try data.write(to: directory.appendingPathComponent("fotina.jpeg")!)
+                print("photo saved, ready to be used")
                 return
             } catch {
                 print(error.localizedDescription)

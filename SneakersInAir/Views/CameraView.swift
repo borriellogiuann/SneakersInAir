@@ -14,9 +14,10 @@ struct CameraView: View {
     
     @ObservedObject var cameraViewModel = CameraViewModel()
     @ObservedObject var apiManager = APIManager()
-    @ObservedObject var viewModel = PhotoPickerViewModel()
+    @ObservedObject var cameraManager = CameraManager()
+    //@ObservedObject var viewModel = PhotoPickerViewModel()
     
-    @State var image = UIImage(named: "ff")
+    @State var image: UIImage?
     @State var isShowingPopup: Bool = false
     @State var shoeName: String = "test"
     @State var shoeImageLink: URL = URL(string: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco,u_126ab356-44d8-4a06-89b4-fcdcc8df0245,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/3914f9b5-be4f-4a18-8a2c-c03a65158ffa/scarpa-jordan-true-flight-J5Ntdp.png")!
@@ -39,7 +40,7 @@ struct CameraView: View {
                         CameraPreview(session: cameraViewModel.session)
                             .ignoresSafeArea()
                     }else{
-                        Image(uiImage: (apiManager.loadPhoto() ?? UIImage(named: "scarpavuota"))!)
+                        Image(uiImage: (image ?? UIImage(named: "scarpavuota"))!)
                             .resizable()
                             .scaledToFill()
                             .ignoresSafeArea()
@@ -91,22 +92,24 @@ struct CameraView: View {
                         Button(action: {
                             disableCamera.toggle()
                             cameraAnimationNumber = 0
-                            DispatchQueue.main.asyncAfter(deadline: .now()+0.1){
+                            cameraViewModel.captureImage()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
                                 fill = 1
                             }
-                            cameraViewModel.captureImage()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 image = cameraViewModel.getImage()
                                 pictureTaken = true
                                 if(cameraViewModel.isFlashOn){
                                     cameraViewModel.switchFlash()
                                 }
+                                
                                 Task{
                                     await upload(image: image!)
                                     await fetchDataFromServer()
                                     await updateImageOnUI()
                                     await deleteImageFromImgur()
                                 }
+                                 
                             }
                         }, label: {
                             ZStack{
@@ -172,9 +175,9 @@ struct CameraView: View {
             print("An error occurred in getting infos from the server")
         }
         
-        shoeName = apiManager.shoeName!
-        shoeImageLink = apiManager.shoeImageLink!
-        json = apiManager.finalJson!
+        self.shoeName = apiManager.shoeName!
+        self.shoeImageLink = apiManager.shoeImageLink!
+        self.json = apiManager.finalJson!
         
     }
     
@@ -188,11 +191,11 @@ struct CameraView: View {
             print("An error occurred in getting the photo")
         }
         
-        isShowingPopup = true
-        disableCamera = false
-        fill = 0.0
-        cameraAnimationNumber = 0
-        pictureTaken = false
+        self.isShowingPopup = true
+        self.disableCamera = false
+        self.fill = 0.0
+        self.cameraAnimationNumber = 0
+        self.pictureTaken = false
     }
     
     func deleteImageFromImgur() async {
@@ -206,7 +209,7 @@ struct CameraView: View {
         catch {
             print("An error occurred in deleting the photo")
         }
-        isLoading = false
+        self.isLoading = false
     }
     
 }

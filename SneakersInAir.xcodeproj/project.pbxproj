@@ -26,7 +26,6 @@
 		54D9734F2B98EF1E00A05671 /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D9734E2B98EF1E00A05671 /* OnBoardingView.swift */; };
 		54D973512B98EF9700A05671 /* AbousUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D973502B98EF9700A05671 /* AbousUsView.swift */; };
 		54E837232B8FF06800C924F2 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E837222B8FF06800C924F2 /* APIManager.swift */; };
-		54E837262B8FF2C300C924F2 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 54E837252B8FF2C300C924F2 /* Alamofire */; };
 		54E837292B8FF3A100C924F2 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 54E837282B8FF3A100C924F2 /* SwiftyJSON */; };
 		BC0400FF2B7B6C90004DA9A0 /* SneakersInAirApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0400FE2B7B6C90004DA9A0 /* SneakersInAirApp.swift */; };
 		BC0401012B7B6C90004DA9A0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0401002B7B6C90004DA9A0 /* ContentView.swift */; };
@@ -74,13 +73,19 @@
 			files = (
 				54E837292B8FF3A100C924F2 /* SwiftyJSON in Frameworks */,
 				5458F87D2B8DD4D400601484 /* PopupView in Frameworks */,
-				54E837262B8FF2C300C924F2 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		541FF5B72BAC272E00A4BD82 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5458F86C2B8CA6CB00601484 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +157,7 @@
 			children = (
 				BC0400FD2B7B6C90004DA9A0 /* SneakersInAir */,
 				BC0400FC2B7B6C90004DA9A0 /* Products */,
+				541FF5B72BAC272E00A4BD82 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,7 +210,6 @@
 			name = SneakersInAir;
 			packageProductDependencies = (
 				5458F87C2B8DD4D400601484 /* PopupView */,
-				54E837252B8FF2C300C924F2 /* Alamofire */,
 				54E837282B8FF3A100C924F2 /* SwiftyJSON */,
 			);
 			productName = SneakersInAir;
@@ -237,7 +242,6 @@
 			mainGroup = BC0400F22B7B6C90004DA9A0;
 			packageReferences = (
 				5458F87B2B8DD4D400601484 /* XCRemoteSwiftPackageReference "PopupView" */,
-				54E837242B8FF2C300C924F2 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				54E837272B8FF3A100C924F2 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 			);
 			productRefGroup = BC0400FC2B7B6C90004DA9A0 /* Products */;
@@ -518,14 +522,6 @@
 				minimumVersion = 2.9.0;
 			};
 		};
-		54E837242B8FF2C300C924F2 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.8.1;
-			};
-		};
 		54E837272B8FF3A100C924F2 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
@@ -541,11 +537,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5458F87B2B8DD4D400601484 /* XCRemoteSwiftPackageReference "PopupView" */;
 			productName = PopupView;
-		};
-		54E837252B8FF2C300C924F2 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 54E837242B8FF2C300C924F2 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 		54E837282B8FF3A100C924F2 /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;

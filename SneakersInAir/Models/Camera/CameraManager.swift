@@ -182,6 +182,7 @@ class CameraManager: ObservableObject {
           if let cameraDelegate {
              // Capture the photo with delegate
              self.photoOutput.capturePhoto(with: photoSettings, delegate: cameraDelegate)
+              print("photo taken, can be saved")
           }
        }
     }
